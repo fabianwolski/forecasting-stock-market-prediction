@@ -21,10 +21,22 @@ def get_stock_data(ticker):
 
     return df
 
+def plot_stock_data(df, ticker):
+    
+    plt.figure(figsize=(16, 8))
+    plt.title(f"stock visual {ticker}")
+    plt.plot(df['Close'])
+    plt.xlabel("Date", fontsize = 18)
+    #USD to EUR converter function??
+    plt.ylabel("Close price in USD",fontsize = 18)
+    
+    plt.show()
+
 def main():
-    # TODO: plot data
-    #temporary styling
-    # plt.style.use('dark_background') 
+
+    # temporary styling
+    plt.style.use('fivethirtyeight') 
+    plt.style.use('dark_background') 
 
     # TODO: Potentially use a function to convert company name to ticker symbol?
     # FIXME: Current version uses hardcoded ticker 
@@ -34,6 +46,7 @@ def main():
     stock_data = get_stock_data(ticker)
     
     print(stock_data.head())
+    plot_stock_data(stock_data, ticker)
     
     
 
