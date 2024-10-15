@@ -14,12 +14,17 @@ from matplotlib import style
 
 def get_stock_data(ticker):
     # TODO: Try except block for api call
-
-    stock_symbol = yf.Ticker(ticker)
+    try:  
+        stock_symbol = yf.Ticker(ticker)
+        df = stock_symbol.history(period="1mo")
+        if df.empty:
+            raise ValueError(f"No data for ticker {ticker}")
+        return df
     #testing with 1 month, pandas dataframe
-    df = stock_symbol.history(period="1mo")
+    except Exception as err:
+        print(f"error on retrieval {ticker}: {err}")
+        return None
 
-    return df
 
 def plot_stock_data(df, ticker):
     
@@ -29,7 +34,7 @@ def plot_stock_data(df, ticker):
     plt.xlabel("Date", fontsize = 18)
     #USD to EUR converter function??
     plt.ylabel("Close price in USD",fontsize = 18)
-    
+
     plt.show()
 
 def main():
@@ -42,14 +47,13 @@ def main():
     # FIXME: Current version uses hardcoded ticker 
     # NOTE: Research more on Yahoo Finance API or use different library for this conversion?
     ticker = "GOOG"
-    
     stock_data = get_stock_data(ticker)
+    if stock_data is not None:
+        print(stock_data.head())
+        plot_stock_data(stock_data, ticker)
+    else:
+        print("process error for stock data")
     
-    print(stock_data.head())
-    plot_stock_data(stock_data, ticker)
-    
-    
-
     
 if __name__ == "__main__":
     main()
