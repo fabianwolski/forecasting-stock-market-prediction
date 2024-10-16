@@ -8,6 +8,10 @@ import yfinance as yf
 import matplotlib.pyplot as plt 
 from matplotlib import style
 
+#classes
+from prediction_models.predict_regression import predict_regression
+from visualization.plot_stock_data import plot_stock_data
+
 # info NOTE: 
 # ticker: A ticker is a symbol,a unique combination of letters and numbers
 # representing a particular stock on an exchange
@@ -16,7 +20,7 @@ def get_stock_data(ticker):
     # TODO: Try except block for api call
     try:  
         stock_symbol = yf.Ticker(ticker)
-        df = stock_symbol.history(period="1mo")
+        df = stock_symbol.history(period="3mo")
         if df.empty:
             raise ValueError(f"No data for ticker {ticker}")
         return df
@@ -24,18 +28,6 @@ def get_stock_data(ticker):
     except Exception as err:
         print(f"error on retrieval {ticker}: {err}")
         return None
-
-
-def plot_stock_data(df, ticker):
-    
-    plt.figure(figsize=(16, 8))
-    plt.title(f"stock visual {ticker}")
-    plt.plot(df['Close'])
-    plt.xlabel("Date", fontsize = 18)
-    #USD to EUR converter function??
-    plt.ylabel("Close price in USD",fontsize = 18)
-
-    plt.show()
 
 def main():
 
@@ -49,8 +41,9 @@ def main():
     ticker = "GOOG"
     stock_data = get_stock_data(ticker)
     if stock_data is not None:
-        print(stock_data.head())
+        # print(stock_data.head())
         plot_stock_data(stock_data, ticker)
+        predict_regression(stock_data, ticker)
     else:
         print("process error for stock data")
     
