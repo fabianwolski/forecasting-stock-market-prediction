@@ -4,10 +4,13 @@ from datetime import datetime, timedelta
 import yfinance as yf
 import pandas as pd
 
+from prediction_models.predict_regression import RegressionPredictor
+from prediction_models import MODEL_REGISTRY 
+
 app = Flask(__name__)
 CORS(app)
 
-def get_stock_data(ticker, start , end):
+def get_stock_data(ticker, start , end, model_type=None):
     try:  
         stock_symbol = yf.Ticker(ticker)
         df = stock_symbol.history( 
@@ -18,23 +21,43 @@ def get_stock_data(ticker, start , end):
         if df.empty:
             raise ValueError(f"No data for ticker {ticker}")
         
+        # Get predictions if model_type is specified
+        predictions = None
+        metrics = None
+        if model_type is not None:
+            if model_type not in MODEL_REGISTRY:
+                raise ValueError(f"Invalid model type: {model_type}. Available models: {list(MODEL_REGISTRY.keys())}")
+            
+            predictor = MODEL_REGISTRY[model_type]()
+            X_train, X_test, y_train, y_test = predictor.prep_data(df.copy())
+            
+            # Train model
+            predictor.train(X_train, y_train)
+            
+            # Make predictions
+            train_pred = predictor.predict(X_train)
+            test_pred = predictor.predict(X_test)
+            
+            # Get metrics
+            train_metrics = predictor.evaluate(y_train, train_pred)
+            test_metrics = predictor.evaluate(y_test, test_pred)
+            
+            metrics = {
+                "train": train_metrics,
+                "test": test_metrics
+            }
+        
+        # Convert datetime index to string for JSON
         #Convert datetime index to string for JSON 
         df.index = df.index.strftime('%Y-%m-%d')
         #dictionary conversion for JSON
         stock_data = df.reset_index().to_dict('records')
 
-    # TODO: Future ML integration
-    #try:
-        # Load model
-        # model = load_model('path_to_model')
         
-        #Make prediction
-        # predictions = model.predict(df)
-        
-        # Add predictions to response request
-        
-        print(f"received {ticker} data")
-        return stock_data
+        return {
+            "data": stock_data,
+            "predictions": metrics
+        }
         
     except Exception as err:
         print(f"error on retrieval {ticker}: {err}")
@@ -45,7 +68,8 @@ def get_stock_data(ticker, start , end):
 def home():
     return jsonify({
         "success" : True,
-        "message" : "Stock API is running. Use /stock for data request"
+        "message" : "Stock API is running. Use /stock for data request",
+        "available_models": list(MODEL_REGISTRY.keys())
     })
 
 
@@ -60,6 +84,7 @@ def data():
             ticker = data.get('ticker')
             start = data.get('start')
             end = data.get('end')
+            model_type = data.get('model_type')
             
             if not all([ticker,start,end]):
                 return jsonify({
@@ -71,11 +96,12 @@ def data():
                     }
                 }), 400
         
-            stock_data = get_stock_data(ticker, start=start,end=end)
+            stock_data = get_stock_data(ticker, start=start,end=end, model_type=model_type)
             return jsonify({
                 "success": True,
                 "message": f"data retrieved success for {ticker}",
-                "data": stock_data
+                "data": stock_data['data'],       #unpack dict
+                "predictions": stock_data['predictions']
             }), 200
         
         except Exception as e:
@@ -89,7 +115,8 @@ def data():
     #get request
     return jsonify({
         "success": True,
-        "message": "Use POST method with ticker, start, and end dates"
+        "message": "Use POST method with ticker, start, and end dates",
+        "available_models": list(MODEL_REGISTRY.keys())  
     }), 200
 
 
