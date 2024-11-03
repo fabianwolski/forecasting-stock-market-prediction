@@ -1,6 +1,8 @@
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-
+from sklearn.metrics import mean_squared_error, r2_score
+import numpy as np
+from prediction_models.prediction_result import PredictionResult
 
 def prep_data(df):
     #Won't need the below columns to run model
@@ -29,12 +31,10 @@ def predict_regression(data, ticker):
     #using train data
     reg_model = reg.fit(X_train, y_train)
     #predicting
-    predict = reg.predict(X_test)
+    train_predict = reg.predict(X_train)
+    test_predict = reg.predict(X_test)
     
-    #TODO: I need to think of what I want to return...
-    #NOTE: I will have multiple models... How do I keep a consistant return structure????
-    #NOTE: make a class for all predicitons???
-    #NOTE: if I want to run API calls later? I need to have easy json convert.
+    
     
 
     
