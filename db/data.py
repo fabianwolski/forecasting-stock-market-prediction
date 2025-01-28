@@ -5,6 +5,8 @@ import yfinance as yf
 import pandas as pd
 
 from prediction_models.predict_regression import RegressionPredictor
+from prediction_models.predict_lstm import LSTMPredictor
+
 from prediction_models import MODEL_REGISTRY 
 
 app = Flask(__name__)

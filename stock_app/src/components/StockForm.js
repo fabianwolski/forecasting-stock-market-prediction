@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 function StockForm() {
     const [predictionResults, setPredictionResults] = useState(null);
-    const [selectedModel, setSelectedModel] = useState('regression');
+    const [selectedModel, setSelectedModel] = useState('');
 
     const handleSubmit = async (event) => {
         event.preventDefault()
@@ -11,7 +11,7 @@ function StockForm() {
         //DD-MM-YYYY to YYYY-MM-DD
         const startDate = formData.get('startDate').split('-').reverse().join('-'); 
         const endDate = formData.get('endDate').split('-').reverse().join('-');     
-
+        //TO:DO ADD array for models since we are directly doing it (Not best practise)
     try{
         const response = await fetch('http://localhost:5000/stock', {
             method: 'POST',
@@ -46,8 +46,7 @@ function StockForm() {
                     name="modelType"
                 >
                     <option value="regression">Linear Regression</option>
-                    {/*going to add more models here */}
-                    {/*<option value="lstm">LSTM</option>*/}
+                    <option value="lstm">LSTM</option>
                     {/*<option value="prophet">Prophet</option>*/}
                     {/*<option value="arima">ARIMA</option>*/}
                 </select>
