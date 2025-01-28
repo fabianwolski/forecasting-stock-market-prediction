@@ -9,7 +9,11 @@ class RegressionPredictor(BasePredictor):
     def __init__(self):
         self.model = LinearRegression()
 
-        
+        #TODO: Graph for all models
+        #TODO: Architecture diagram
+        #adavntages/disadvantages of your approach
+        #computation time? user feedback -two types of visualization.
+        #how do i assess my project? From user perspective, programming perspecitve, or ML? SImplicity.
     def prep_data(self, df):
         df = df.copy()
         #Won't need the below columns to run model
@@ -47,11 +51,9 @@ class RegressionPredictor(BasePredictor):
         mape_val = np.mean(np.abs((y_true - y_pred) / y_true)) * 100
         
         return {
-            "mse": float(mse_val),
-            "rmse": float(rmse_val),
+            "mse": float(mse_val), #Mean Squared Error
+            "rmse": float(rmse_val), #Root Mean Squared Error
             "r2": float(r2_val),
-            "mae": float(mae_val),
-            "mape": float(mape_val)
+            "mae": float(mae_val), #Mean Absolute Error
+            "mape": float(mape_val) #Mean Absolute Percentage Error
         }
-
-    
