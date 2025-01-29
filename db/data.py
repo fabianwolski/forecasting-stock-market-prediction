@@ -4,9 +4,6 @@ from datetime import datetime, timedelta
 import yfinance as yf
 import pandas as pd
 
-from prediction_models.predict_regression import RegressionPredictor
-from prediction_models.predict_lstm import LSTMPredictor
-
 from prediction_models import MODEL_REGISTRY 
 
 app = Flask(__name__)
@@ -19,7 +16,9 @@ def get_stock_data(ticker, start , end, model_type=None):
             start=start,
             end=end
             )
-        
+        print(f"Initial data shape: {df.shape}")
+        print(f"Initial data columns: {df.columns}")
+        print(f"NaN values in initial data:\n{df.isna().sum()}")
         if df.empty:
             raise ValueError(f"No data for ticker {ticker}")
         
@@ -31,8 +30,9 @@ def get_stock_data(ticker, start , end, model_type=None):
                 raise ValueError(f"Invalid model type: {model_type}. Available models: {list(MODEL_REGISTRY.keys())}")
             
             predictor = MODEL_REGISTRY[model_type]()
+            print(f"Using model type: {model_type}")
             X_train, X_test, y_train, y_test = predictor.prep_data(df.copy())
-            
+            print(f"After prep_data - X_train shape: {X_train.shape}")
             # Train model
             predictor.train(X_train, y_train)
             

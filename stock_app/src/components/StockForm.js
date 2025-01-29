@@ -47,8 +47,8 @@ function StockForm() {
                 >
                     <option value="regression">Linear Regression</option>
                     <option value="lstm">LSTM</option>
-                    {/*<option value="prophet">Prophet</option>*/}
-                    {/*<option value="arima">ARIMA</option>*/}
+                    <option value="prophet">Prophet</option>
+                    <option value="arima">ARIMA</option>
                 </select>
                 <button type="submit">Predict</button>
             </form>
