@@ -1,8 +1,16 @@
 import React, { useState } from 'react'
+import { useStock } from '../contexts/StockContext';
 
-function StockForm() {
-    const [predictionResults, setPredictionResults] = useState(null);
+const MODEL_OPTIONS = [
+    {value: "regression", label: "Linear Regression"},
+    {value: "lstm", label: "LSTM"},
+    {value: "prophet", label: "Prophet"},
+    {value: "arima", label: "ARIMA"}
+];
+
+function StockSearchForm() {
     const [selectedModel, setSelectedModel] = useState('');
+    const {stockData, updateStockData, setLoading, setError} = useStock()
 
     const handleSubmit = async (event) => {
         event.preventDefault()
@@ -13,29 +21,30 @@ function StockForm() {
         const endDate = formData.get('endDate').split('-').reverse().join('-');     
         //TO:DO ADD array for models since we are directly doing it (Not best practise)
     try{
+        setLoading(true)
         const response = await fetch('http://localhost:5000/stock', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ ticker, start: startDate, end: endDate,  model_type: selectedModel})
         });
         const data = await response.json();  //api returns json so .json needed 
-            if (data.success) {
-                alert(`Success: ${data.message}`);
-                console.log('Stock Data:', data.data);
-                if (data.predictions) {
-                    console.log('Prediction Metrics:', data.predictions);
-                    setPredictionResults(data.predictions);
-                }
-            } else {
-                alert(`Error: ${data.error}`);
-            }
-    }catch(error){
-        alert('Error: ', error)
-    }
+            
+        if (data.success) {
+            alert(`Success: ${data.message}`);
+            updateStockData(data)
+            console.log('Stock Data:', data);
+        } else {
+            alert(`Error: ${data.error}`);
+            setError(data.error)
+        }
+        }catch(error){
+            alert('Error: ', error)
+            setError(error.message)
+        }
     };
 
     return(
-             <div>
+            <div>
             <form onSubmit={handleSubmit}>
                 <input name="ticker" placeholder="Ticker (example: AAPL)" required />
                 <input name="startDate" placeholder="Start DD-MM-YYYY" required />
@@ -45,22 +54,19 @@ function StockForm() {
                     onChange={(e) => setSelectedModel(e.target.value)}
                     name="modelType"
                 >
-                    <option value="regression">Linear Regression</option>
-                    <option value="lstm">LSTM</option>
-                    <option value="prophet">Prophet</option>
-                    <option value="arima">ARIMA</option>
+                   <option value="">Select Model</option>
+                   {MODEL_OPTIONS.map(option =>(
+                    <option key={option.value} value={option.value}>        
+                        {option.label}
+                    </option>
+                   ))}
                 </select>
-                <button type="submit">Predict</button>
+                <button type="submit" disabled={stockData?.oading}> 
+                    {stockData?.loading ? 'Loading...' : 'Predict'}
+                    </button>
             </form>
-
-            {predictionResults && (
-                <div>
-                    <h3>Prediction Results:</h3>
-                    <pre>{JSON.stringify(predictionResults, null, 2)}</pre>
-                </div>
-            )}
         </div>
     );
 }
 
-export default StockForm
+export default StockSearchForm
