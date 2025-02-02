@@ -15,9 +15,9 @@ export const StockProvider = ({children}) =>{
     const updateStockData = (data) => {
         setStockData(prev => ({
             ...prev,
-            historicalData: data.historicalData,
-            stockInfo: data.stockInfo,
-            predictionResults: data.predictionResults,
+            historicalData: data.historical_data,
+            stockInfo: data.stock_info,
+            predictionResults: data.predictions,
             loading: false,
             error: null
         }))

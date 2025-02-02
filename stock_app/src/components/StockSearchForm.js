@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useStock } from '../contexts/StockContext';
-
+import { BsSearch} from "react-icons/bs";
 const MODEL_OPTIONS = [
     {value: "regression", label: "Linear Regression"},
     {value: "lstm", label: "LSTM"},
@@ -45,14 +45,15 @@ function StockSearchForm() {
 
     return(
             <div>
-            <form onSubmit={handleSubmit}>
-                <input name="ticker" placeholder="Ticker (example: AAPL)" required />
-                <input name="startDate" placeholder="Start DD-MM-YYYY" required />
-                <input name="endDate" placeholder="End DD-MM-YYYY" required />
+            <form onSubmit={handleSubmit} className=' p-2 border-2 bg-white border-neutral-300 rounded-lg'>
+                <input name="ticker" placeholder="Ticker (example: AAPL)" className="mx-4" required />
+                <input name="startDate" placeholder="Start DD-MM-YYYY" className="mx-2" required />
+                <input name="endDate" placeholder="End DD-MM-YYYY" required  />
                 <select 
                     value={selectedModel} 
                     onChange={(e) => setSelectedModel(e.target.value)}
                     name="modelType"
+                    className="p-1 border rounded-md border-neutral-300"
                 >
                    <option value="">Select Model</option>
                    {MODEL_OPTIONS.map(option =>(
@@ -61,8 +62,9 @@ function StockSearchForm() {
                     </option>
                    ))}
                 </select>
-                <button type="submit" disabled={stockData?.oading}> 
-                    {stockData?.loading ? 'Loading...' : 'Predict'}
+                <button type="search" disabled={stockData?.loading}
+                className='bg-sky-600 rounded-md mx-4 p-2'> 
+                    <BsSearch className='h-4 w-4 fill-gray-100'></BsSearch>
                     </button>
             </form>
         </div>
