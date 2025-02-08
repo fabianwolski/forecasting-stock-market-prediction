@@ -14,7 +14,7 @@ const StockDetails = ({stockInfo}) =>{
     }
 
     const convertMillToBill = (number) =>{
-        return (number / 1000).toFixed(2)
+        return (number / 1000000000).toFixed(2); 
     }
 
     return(

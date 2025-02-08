@@ -2,15 +2,17 @@ import { Card } from "./Card";
 import { useStock } from "../contexts/StockContext";
 import StockSearchForm from "./StockSearchForm";
 import StockDetails from "./StockDetails";
+import StockOverview from "./StockOverview"
 import React from "react";
 
 const Dashboard = () =>{
     const {stockData} = useStock()
 
     const stockInfo = stockData.stockInfo
+    const historicalData = stockData.historicalData
 
     return(
-    <div className="h-screen grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 grid-rows-8 md-grid-rows-7 xl:grid-rows-5 auto-rows-fr gap-6 p-10 font-quicksand">
+    <div className="h-screen grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 grid-rows-8 md-grid-rows-7 xl:grid-rows-5 auto-rows-fr gap-6 p-10 font-quicksand bg-neutral-100">
         <div className="col-span-1 md:col-span-2 xl:col-span-3 row-span-1 flex justify-start items-center">
             {/* search component */}
             <StockSearchForm></StockSearchForm>
@@ -20,7 +22,7 @@ const Dashboard = () =>{
             <Card>Chart</Card>
         </div>
         <div>
-            <Card>Overview</Card>
+            <StockOverview stockInfo = {stockInfo} historicalData={historicalData}></StockOverview>
         </div>
         <div className="row-span-2 xl:row-span-3">
             <StockDetails stockInfo={stockInfo}/>
