@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { useStock } from '../contexts/StockContext';
 import { BsSearch} from "react-icons/bs";
+import { Card } from './Card';
+
 const MODEL_OPTIONS = [
     {value: "regression", label: "Linear Regression"},
     {value: "lstm", label: "LSTM"},
@@ -43,29 +45,54 @@ function StockSearchForm() {
         }
     };
 
-    return(
-            <div>
-            <form onSubmit={handleSubmit} className=' p-2 border-2 bg-white border-neutral-300 rounded-lg'>
-                <input name="ticker" placeholder="Ticker (example: AAPL)" className="mx-4" required />
-                <input name="startDate" placeholder="Start DD-MM-YYYY" className="mx-2" required />
-                <input name="endDate" placeholder="End DD-MM-YYYY" required  />
+    return (
+        <div>
+            <form onSubmit={handleSubmit} className="p-4 bg-gray-900 border border-gray-800 rounded-lg">
+                <input 
+                    name="ticker" 
+                    placeholder="Ticker (example: AAPL)" 
+                    className="mx-4 p-2 bg-gray-800 text-gray-300 border border-gray-700 rounded-md placeholder-gray-500 focus:outline-none focus:border-sky-600" 
+                    required 
+                    autoComplete="off"
+                />
+                <input 
+                    name="startDate" 
+                    placeholder="Start DD-MM-YYYY" 
+                    className="mx-2 p-2 bg-gray-800 text-gray-300 border border-gray-700 rounded-md placeholder-gray-500 focus:outline-none focus:border-sky-600" 
+                    required 
+                    autoComplete="off"
+                />
+                <input 
+                    name="endDate" 
+                    placeholder="End DD-MM-YYYY" 
+                    className="p-2 bg-gray-800 text-gray-300 border border-gray-700 rounded-md placeholder-gray-500 focus:outline-none focus:border-sky-600" 
+                    required  
+                    autoComplete="off"
+                />
                 <select 
                     value={selectedModel} 
                     onChange={(e) => setSelectedModel(e.target.value)}
                     name="modelType"
-                    className="p-1 border rounded-md border-neutral-300"
+                    className="mx-4 p-2 bg-gray-800 text-gray-300 border border-gray-700 rounded-md focus:outline-none focus:border-sky-600"
                 >
-                   <option value="">Select Model</option>
-                   {MODEL_OPTIONS.map(option =>(
-                    <option key={option.value} value={option.value}>        
-                        {option.label}
-                    </option>
-                   ))}
+                    <option value="" className="bg-gray-800">Select Model</option>
+                    {MODEL_OPTIONS.map(option => (
+                        <option 
+                            key={option.value} 
+                            value={option.value}
+                            className="bg-gray-800"
+                        >
+                            {option.label}
+                        </option>
+                    ))}
                 </select>
-                <button type="search" disabled={stockData?.loading}
-                className='bg-sky-600 rounded-md mx-4 p-2'> 
-                    <BsSearch className='h-4 w-4 fill-gray-100'></BsSearch>
-                    </button>
+                <button 
+                    type="submit" 
+                    disabled={stockData?.loading}
+                    className="bg-sky-600 hover:bg-sky-700 rounded-md p-2 transition-colors duration-200"
+                > 
+                    <BsSearch className="h-4 w-4 text-gray-100" />
+                </button>
             </form>
         </div>
     );
