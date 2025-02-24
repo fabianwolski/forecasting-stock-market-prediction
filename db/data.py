@@ -53,11 +53,11 @@ def get_stock_data(ticker, start, end, model_type=None):
                 raise ValueError(f"Invalid model type: {model_type}. Available models: {list(MODEL_REGISTRY.keys())}")
             
             predictor = MODEL_REGISTRY[model_type]()
-            X_train, X_test, y_train, y_test = predictor.prep_data(df.copy())
+            X_train, X_test, y_train, y_test, train_dates, test_dates = predictor.prep_data(df.copy())
             predictor.train(X_train, y_train)
             
-            train_pred = predictor.predict(X_train)
-            test_pred = predictor.predict(X_test)
+            train_pred = predictor.predict(X_train, dates=train_dates)
+            test_pred = predictor.predict(X_test, dates=test_dates)
             
             metrics = {
                 "train": predictor.evaluate(y_train, train_pred),
