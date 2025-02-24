@@ -4,3 +4,5 @@ This project will investigate retrieving time series (e.g. yahoo finance), run s
 # dependencies
 
 pip install yfinance pandas matplotlib datetime scikit-learn
+
+upgrade yfinance api if error running backend on api call

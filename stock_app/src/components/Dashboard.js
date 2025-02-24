@@ -7,9 +7,9 @@ import React from "react";
 
 const Dashboard = () =>{
     const {stockData} = useStock()
-
     const stockInfo = stockData.stockInfo
     const historicalData = stockData.historicalData
+    const predictionResults = stockData.predictionResults
 
     return(
     <div className="h-screen grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 grid-rows-8 md-grid-rows-7 xl:grid-rows-5 auto-rows-fr gap-6 p-10 font-quicksand bg-gray-900 text-gray-300">
@@ -18,10 +18,10 @@ const Dashboard = () =>{
         </div>
 
         <div className="md:col-span-2 row-span-4">
-            <StockChart historicalData={historicalData}></StockChart>
+            <StockChart historicalData={historicalData} predictionResults= {predictionResults}></StockChart>
         </div>
         <div>
-            <StockOverview stockInfo = {stockInfo} historicalData={historicalData}></StockOverview>
+        <StockOverview stockInfo = {stockInfo} historicalData={historicalData}></StockOverview>
         </div>
         <div className="row-span-2 xl:row-span-3">
             <StockDetails stockInfo={stockInfo}/>

@@ -1,7 +1,6 @@
 import { Card } from "./Card";
 
 const StockDetails = ({stockInfo}) =>{
-    console.log('StockDetails received:', stockInfo)
     if(!stockInfo) return null
 
     const detailsList = {
