@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card } from "./Card";
+import InfoTooltip from './InfoToolTip';
+import ModelInfo from './ModelInfo';
 import {
-    AreaChart,
-    xAxisId,
     ComposedChart,
     Area,
     XAxis,
@@ -19,11 +19,11 @@ const SERIES_COLORS = {
     "Test Predictions": "#FFFF00"
 }
 
-const StockChart = ({ historicalData, predictionResults }) => {
+const StockChart = ({ historicalData, predictionResults, selectedModel }) => {
     if (!historicalData || historicalData.length < 2) return;
-    console.log("Full prediction results:", predictionResults);
-    console.log("Train predictions structure:", predictionResults?.train);
-    console.log("Test predictions structure:", predictionResults?.test);
+    // console.log("Full prediction results:", predictionResults);
+    // console.log("Train predictions structure:", predictionResults?.train);
+    // console.log("Test predictions structure:", predictionResults?.test);
     const trainPredictions = predictionResults?.train?.predictions || [];
     const testPredictions = predictionResults?.test?.predictions || [];
 
@@ -40,7 +40,6 @@ const StockChart = ({ historicalData, predictionResults }) => {
                         </linearGradient>
                     </defs>
                     
-                    {/* Historical Data */}
                     <Area 
                         data={historicalData}
                         type="monotone" 
@@ -53,7 +52,6 @@ const StockChart = ({ historicalData, predictionResults }) => {
                         xAxisId="date"
                     />
 
-                    {/* Training Predictions */}
                     <Line
                         data={trainPredictions}
                         type="monotone"
@@ -65,7 +63,6 @@ const StockChart = ({ historicalData, predictionResults }) => {
                         xAxisId="date"
                     />
 
-                    {/* Test Predictions */}
                     <Line
                         data={testPredictions}
                         type="monotone"
@@ -100,20 +97,48 @@ const StockChart = ({ historicalData, predictionResults }) => {
                 </ComposedChart>
             </ResponsiveContainer>
 
-            {/* Metrics Display */}
-            <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+            <div className="mt-4 grid grid-cols-2 gap-4">
                 <div>
-                    <h3 className="font-medium text-gray-200">Training Metrics</h3>
-                    <p className="text-gray-400">
-                        RMSE: {predictionResults?.train?.metrics?.rmse.toFixed(2)}
-                    </p>
+                    <div className="flex items-center">
+                        <h3 className="font-medium text-gray-200">Training Metrics</h3>
+                        <InfoTooltip content="Shows how well the model fits the historical training data. Lower RMSE and MAPE values indicate better performance. Higher R²(closer to 100%) indicates a better fit." />
+                    </div>
+                    <div className="text-sm text-gray-400">
+                        <p className="flex items-center">
+                            RMSE: {predictionResults?.train?.metrics?.rmse.toFixed(2)}
+                        </p>
+                        <p className="flex items-center">
+                            R²: {(predictionResults?.train?.metrics?.r2 * 100).toFixed(2)}%
+                        </p>
+                        <p className="flex items-center">
+                            MAPE: {predictionResults?.train?.metrics?.mape.toFixed(2)}%
+                        </p>
+                    </div>
                 </div>
                 <div>
-                    <h3 className="font-medium text-gray-200">Test Metrics</h3>
-                    <p className="text-gray-400">
-                        RMSE: {predictionResults?.test?.metrics?.rmse.toFixed(2)}
-                    </p>
+                    <div className="flex items-center">
+                        <h3 className="font-medium text-gray-200">Test Metrics</h3>
+                        <InfoTooltip content="Shows how well the model predicts new, unseen data. Major factor in identifying true predictive performance." />
+                    </div>
+                    <div className="text-sm text-gray-400">
+                        <p className="flex items-center">
+                            RMSE: {predictionResults?.test?.metrics?.rmse.toFixed(2)}
+                            <InfoTooltip content="Root Mean Square Error - measures the average magnitude of errors made by prediction (lower is better)" />
+                        </p>
+                        <p className="flex items-center">
+                            R²: {(predictionResults?.test?.metrics?.r2 * 100).toFixed(2)}%
+                            <InfoTooltip content="R-squared - indicates how well the model explains the variance in data (higher is better, max 100%)" />
+                        </p>
+                        <p className="flex items-center">
+                            MAPE: {predictionResults?.test?.metrics?.mape.toFixed(2)}%
+                            <InfoTooltip content="Mean Absolute Percentage Error - average percentage difference between predicted and actual values (lower is better)" />
+                        </p>
+                    </div>
                 </div>
+            </div>
+
+            <div className="mt-2">
+                <ModelInfo selectedModel={selectedModel} />
             </div>
         </Card>
     );
