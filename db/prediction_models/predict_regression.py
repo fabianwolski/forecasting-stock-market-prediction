@@ -7,11 +7,6 @@ class RegressionPredictor(BasePredictor):
     def __init__(self):
         self.model = LinearRegression()
 
-        #TODO: Graph for all models
-        #TODO: Architecture diagram
-        #adavntages/disadvantages of your approach
-        #computation time? user feedback -two types of visualization.
-        #how do i assess my project? From user perspective, programming perspecitve, or ML? SImplicity.
     def prep_data(self, df):
         df = df.copy()
         
@@ -20,32 +15,13 @@ class RegressionPredictor(BasePredictor):
         
         X = pd.DataFrame(index=all_dates)
         
-        X['sin_month'] = np.sin(2 * np.pi * all_dates.month / 12)
-        X['cos_month'] = np.cos(2 * np.pi * all_dates.month / 12)
-        X['sin_day'] = np.sin(2 * np.pi * all_dates.day / 31)
-        X['cos_day'] = np.cos(2 * np.pi * all_dates.day / 31)
-        X['sin_weekday'] = np.sin(2 * np.pi * all_dates.dayofweek / 7)
-        X['cos_weekday'] = np.cos(2 * np.pi * all_dates.dayofweek / 7)
+        X['lagged_close'] = df['Close'].shift(1)
+        X['ma10'] = df['Close'].rolling(window=10, min_periods=1).mean()
+        X['ma30'] = df['Close'].rolling(window=30, min_periods=1).mean()
+        X['time_idx'] = np.arange(len(df))
         
-        lag = 3  
-        X['lagged_close'] = df['Close'].shift(lag)
-        X['lagged_volume'] = df['Volume'].shift(lag)
-        
-        X['ma10'] = df['Close'].shift(lag).rolling(window=10, min_periods=1).mean()
-        X['ma30'] = df['Close'].shift(lag).rolling(window=30, min_periods=1).mean()
-        X['ma50'] = df['Close'].shift(lag).rolling(window=50, min_periods=1).mean()
-        
-        X['vol_ma10'] = df['Volume'].shift(lag).rolling(window=10, min_periods=1).mean()
-        
-        X['weekly_return'] = (df['Close'] / df['Close'].shift(5) - 1).shift(lag).fillna(0)
-        X['monthly_return'] = (df['Close'] / df['Close'].shift(20) - 1).shift(lag).fillna(0)
-        
-        X['trend_50_200'] = (X['ma50'] > df['Close'].shift(lag).rolling(window=200, min_periods=1).mean()).astype(int)
-        
-
         X = X.fillna(method='bfill').fillna(method='ffill')
         
-
         X_train = X.iloc[:split_idx].values
         X_test = X.iloc[split_idx:].values
         y_train = df['Close'].iloc[:split_idx].values
@@ -59,6 +35,18 @@ class RegressionPredictor(BasePredictor):
     
     def predict(self, X, dates=None):
         raw_predictions = self.model.predict(X)
+        
+        if dates is not None and len(X) < 100: 
+            start_value = raw_predictions[0]
+            
+            if len(raw_predictions) > 1:
+                end_value = raw_predictions[-1]
+                total_change = end_value - start_value
+                slope = total_change / (len(raw_predictions) - 1)
+                
+                linear_preds = np.array([start_value + i * slope for i in range(len(raw_predictions))])
+                
+                raw_predictions = linear_preds
         
         if dates is not None:
             return {
