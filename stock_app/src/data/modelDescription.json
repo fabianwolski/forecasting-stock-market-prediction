@@ -1,0 +1,113 @@
+{
+    "regression": {
+      "name": "Linear Regression",
+      "description": "A model used in statistics that can predict future stock prices by making linear relationships between multiple features and target values. Finds the optimal coefficients that minimizes prediction errors.",
+      "strengths": [
+        "Fast (computationally efficient) therfore quick training times", 
+        "Can Perform quite well in trending markets where linear behavior is common",
+        "Very easy to deploy and maintain in production environment"
+      ],
+      "weaknesses": [
+        "Cannot get non linear market relationships which are quite common in finance data",
+        "Underperforms when a regime changes or in market volatility",
+        "High sensitivity to outliers which could possibly skew predictions"
+      ],
+      "features": [
+        "Historical price data: (open, high, low, close)",
+        "Technical indicators: (RSI, moving averages, MACD)",
+        "Temporal features: (day of week, month, seasonality)",
+        "Metrics for Volume and volatility"
+      ],
+      "graphExpectation": "Training predictions (green) should follow the general market direction. Test predictions (yellow) are displayed as an idealized straight line for educational purposes, thus please note our model is NOT making actual prediction in this case, it only shows the conceptual nature of linear forecasting. We are using a rolling window approach"
+    },
+    "arima": {
+      "name": "ARIMA",
+      "description": "Autoregressive Integrated Moving Average combines autoregression, differencing, and moving averages in order to model time series, capturing short-term patterns and trends in price movements.",
+      "strengths": [
+        "Specifically designed for time series forecasting",
+        "Effectively captures complex autocorrelations and interactions between multiple economic indicators.",
+        "Provides statistical confidence intervals for predictions"
+      ],
+      "weaknesses": [
+        "Limited to univariate analysis, thus could ignore potentially valuable external factors",
+        "Linear relationships assumption between past and future values. Can lead to errors during events like market crashes",
+        "Requires stationary data, which needs preprocessing",
+        "Performance degrades with long term forecasts as uncertainty builds up"
+      ],
+      "features": [
+        "Makes use of lagged moving averages to smooth time series data.",
+        "Differencing parameters to achieve stationarity",
+        "Autoregressive terms capturing price momentum"
+      ],
+      "graphExpectation": "ARIMA produces smoother training predictions (green) that capture the overall trend while filtering out noise. Test predictions (yellow) typically show mean reverting behavior for stationary series or trend continuation with widening confidence intervals over longer horizons."
+    },
+    "prophet": {
+      "name": "Prophet",
+      "description": "Developed by Facebook, Prophet breaks down time series into trend, seasonality, and holiday components using a Bayesian approach. It's designed to handle missing data and detect change points automatically.",
+      "strengths": [
+        "Models multiple seasonal patterns (daily, weekly, yearly) very well",
+        "Automatically detects trend changes and adjusts forecasts accordingly",
+        "Robust to missing data points and outliers",
+        "Incorporates holiday effects and special events"
+      ],
+      "weaknesses": [
+        "Not specifically optimized for high frequency financial data",
+        "Tends to under react to sudden market shifts and news events",
+        "Limited ability to incorporate technical indicators",
+        "Can be computationally intensive for large datasets"
+      ],
+      "features": [
+        "Trend component with automatic changepoint detection",
+        "Multiple seasonality components (daily, weekly,annual patterns)",
+        "Holiday and event effects",
+        "Prior scale parameters for controlled flexibility"
+      ],
+      "graphExpectation": "Prophet's training predictions (green) capture smooth underlying trends and seasonal patterns while ignoring short term noise. Test predictions (yellow) often show cyclical patterns and typically maintain the final trend direction, gradually reverting to the mean for longer forecasts."
+    },
+    "lstm": {
+      "name": "LSTM",
+      "description": "Long Short-Term Memory networks are recurrent neural networks designed with specialized memory cells that can learn long term dependencies in sequential data, making them powerful for capturing complex market dynamics.",
+      "strengths": [
+        "Captures intricate non linear relationships between inputs and future prices",
+        "Retains historical information pertinent to the task while losing irrelevant facts",
+        "Is able to process multiple input features in parallel",
+        "Adjusts to changing market environments when well designed"
+      ],
+      "weaknesses": [
+        "Requires very large amounts of training data to get to effective performance",
+        "Computationally intensive therfore slower to train than other traditional models",
+        "Can tend to overfit without proper regularization",
+        "Limited interpretability"
+      ],
+      "features": [
+        "Sequence of normalized price data with suitable window size",
+        "Technical indicators passed through specialized network layers",
+        "Several LSTM layers with different memory cell configurations",
+        "Dropout and recurrent dropout for regularization"
+      ],
+      "graphExpectation": "LSTM training predictions (green) are able to closely track actual price action, including both trends and patterns of volatility. Test predictions (yellow) tend to have more subtle behavior, perhaps picking up on market reversals and non-linear continuations of learned patterns"
+    },
+    "xgboost": {
+      "name": "XGBoost",
+      "description": "Extreme Gradient Boosting is an ensemble method that constructs decision trees sequentially, with each additional tree correcting the mistakes of those trees that came before it. It is particularly good at modeling non-linear relationships in financial data.",
+      "strengths": [
+        "Effectively captures complex non-linear market relationships",
+        "Handles different types of features without a lot of preprocessing",
+        "Built-in regularization to prevent overfitting",
+        "Provides good feature importance rankings"
+      ],
+      "weaknesses": [
+        "Less interpretable than linear models or individual decision trees",
+        "Requires careful hyperparameter tuning for optimal performance",
+        "Can overfit noisy financial data if not constrained properly",
+        "Can have trouble with completely new market regimes not seen in training data"
+      ],
+      "features": [
+        "Multi-timeframe detailed technical indicators",
+        "Price momentum and mean-reversion signals",
+        "Volume profile and liquidity measures",
+        "Market regime indicators and volatility features"
+      ],
+      "graphExpectation": "XGBoost has a tendency to produce training predictions (green) that closely trace actual prices, following trends and volatility patterns. Test predictions (yellow) typically demonstrate reactive dynamics to recent market information, following potential reversals and non-linear patterns based on similar historic circumstances."
+    }
+  }

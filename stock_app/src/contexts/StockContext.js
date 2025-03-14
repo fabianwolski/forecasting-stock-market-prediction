@@ -2,12 +2,12 @@ import { createContext, useState, useContext } from "react";
 
 const StockContext = createContext()
 
-//i need to expose "historical_data": stock_data, "stock_info": stock_info,"predictions": metric
-export const StockProvider = ({children}) =>{
+export const StockProvider = ({children}) => {
     const [stockData, setStockData] = useState({
         historicalData: null,
         stockInfo: null,
         predictionResults: null,
+        selectedModel: null, 
         loading: false,
         error: null
     })
@@ -18,46 +18,46 @@ export const StockProvider = ({children}) =>{
             historicalData: data.historical_data,
             stockInfo: data.stock_info,
             predictionResults: data.predictions,
+            selectedModel: data.selectedModel, 
             loading: false,
             error: null
         }))
     }
 
-    const setLoading = (isLoading) =>{
-        setStockData(prev=>({
+    const setLoading = (isLoading) => {
+        setStockData(prev => ({
             ...prev,
             loading: isLoading,
-            error:null
+            error: null
         }))
     }
 
-    const setError = (error) =>{
-        setStockData(prev =>({
+    const setError = (error) => {
+        setStockData(prev => ({
             ...prev,
             loading: false,
             error: error
         }))
     }
+    
     const value = {
         stockData,
         updateStockData,
         setLoading,
         setError
-      };
-    return(
+    };
+    
+    return (
         <StockContext.Provider value={value}>
             {children}
         </StockContext.Provider>
     )
-    
 }
 
-export const useStock = () =>{
+export const useStock = () => {
     const context = useContext(StockContext)
-    if(!context){
+    if(!context) {
         throw new Error("useStock needs to be wrapped in provider")
     }
     return context
 }
-            
-            

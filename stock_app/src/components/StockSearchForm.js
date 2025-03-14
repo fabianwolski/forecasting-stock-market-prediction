@@ -21,26 +21,32 @@ function StockSearchForm() {
         //DD-MM-YYYY to YYYY-MM-DD
         const startDate = formData.get('startDate').split('-').reverse().join('-'); 
         const endDate = formData.get('endDate').split('-').reverse().join('-');     
-        //TO:DO ADD array for models since we are directly doing it (Not best practise)
-    try{
-        setLoading(true)
-        const response = await fetch('http://localhost:5000/stock', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ ticker, start: startDate, end: endDate,  model_type: selectedModel})
-        });
-        const data = await response.json();  //api returns json so .json needed 
-            
-        if (data.success) {
-            // alert(`Success: ${data.message}`);
-            updateStockData(data)
-        } else {
-            alert(`Error: ${data.error}`);
-            setError(data.error)
-        }
-        }catch(error){
+        
+        try{
+            setLoading(true)
+            const response = await fetch('http://localhost:5000/stock', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ ticker, start: startDate, end: endDate,  model_type: selectedModel})
+            });
+            const data = await response.json();  //api returns json so .json needed 
+                
+            if (data.success) {
+                //adding the selected model to the stockData
+                const enhancedData = {
+                    ...data,
+                    selectedModel: selectedModel
+                };
+                updateStockData(enhancedData);
+            } else {
+                alert(`Error: ${data.error}`);
+                setError(data.error)
+            }
+        } catch(error){
             alert('Error: ', error)
             setError(error.message)
+        } finally {
+            setLoading(false)
         }
     };
 
@@ -52,21 +58,18 @@ function StockSearchForm() {
                     placeholder="Ticker (example: AAPL)" 
                     className="mx-4 p-2 bg-gray-800 text-gray-300 border border-gray-700 rounded-md placeholder-gray-500 focus:outline-none focus:border-sky-600" 
                     required 
-                    // autoComplete="off"
                 />
                 <input 
                     name="startDate" 
                     placeholder="Start DD-MM-YYYY" 
                     className="mx-2 p-2 bg-gray-800 text-gray-300 border border-gray-700 rounded-md placeholder-gray-500 focus:outline-none focus:border-sky-600" 
                     required 
-                    // autoComplete="off"
                 />
                 <input 
                     name="endDate" 
                     placeholder="End DD-MM-YYYY" 
                     className="p-2 bg-gray-800 text-gray-300 border border-gray-700 rounded-md placeholder-gray-500 focus:outline-none focus:border-sky-600" 
                     required  
-                    // autoComplete="off"
                 />
                 <select 
                     value={selectedModel} 
