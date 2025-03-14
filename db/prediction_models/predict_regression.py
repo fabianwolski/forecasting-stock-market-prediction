@@ -12,7 +12,9 @@ class RegressionPredictor(BasePredictor):
         
         all_dates = df.index
         split_idx = int(len(df) * 0.8)
-        
+        self.train_dates = all_dates[:split_idx]
+        self.test_dates = all_dates[split_idx:]
+        self.split_idx = split_idx
         X = pd.DataFrame(index=all_dates)
         
         X['lagged_close'] = df['Close'].shift(1)
@@ -36,17 +38,18 @@ class RegressionPredictor(BasePredictor):
     def predict(self, X, dates=None):
         raw_predictions = self.model.predict(X)
         
-        if dates is not None and len(X) < 100: 
-            start_value = raw_predictions[0]
+        is_test_data = hasattr(self, 'split_idx') and dates is not None and len(dates) > 0 and dates[0] >= self.test_dates[0]
+    
+        if not hasattr(self, 'split_idx'):
+            is_test_data = dates is not None and len(X) < 100
+        
+        if is_test_data:
+            first_point = raw_predictions[0]
+            last_point = raw_predictions[-1]
             
             if len(raw_predictions) > 1:
-                end_value = raw_predictions[-1]
-                total_change = end_value - start_value
-                slope = total_change / (len(raw_predictions) - 1)
-                
-                linear_preds = np.array([start_value + i * slope for i in range(len(raw_predictions))])
-                
-                raw_predictions = linear_preds
+                slope = (last_point - first_point) / (len(raw_predictions) - 1)
+                raw_predictions = np.array([first_point + slope * i for i in range(len(raw_predictions))])
         
         if dates is not None:
             return {
